@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSC - Mohanty E-Point</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: #f7fafc;
+        color: #1a202c;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* Loader */
+      .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #2b6cb0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .loader-circle {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #fbd38d;
+        border-top: 6px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loader-text {
+        color: white;
+        font-size: 1.5rem;
+        margin-left: 1rem;
+        font-weight: 600;
+      }
+
+      /* Header */
+      header {
+        background: linear-gradient(135deg, #2b6cb0, #2c5282);
+        color: white;
+        padding: 1.5rem 0;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: padding 0.3s ease;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 3rem;
+      }
+
+      .logo {
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        transition: transform 0.3s ease;
+      }
+
+      .logo:hover {
+        transform: scale(1.05);
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+      }
+
+      nav ul {
+        display: flex;
+        list-style: none;
+        margin-right: 2rem;
+      }
+
+      nav ul li {
+        margin-left: 2.5rem;
+      }
+
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      nav ul li a:hover {
+        color: #fbd38d;
+      }
+
+      nav ul li a svg {
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+        fill: currentColor;
+      }
+
+      .cta-button {
+        background: #fbd38d;
+        color: #1a3657;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background: #f6ad55;
+        transform: scale(1.05);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      /* Mobile Styles */
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        nav ul {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          width: 100%;
+          background: linear-gradient(135deg, #2b6cb0, #2c5282);
+          padding: 1rem 0;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        nav ul.active {
+          display: flex;
+        }
+
+        nav ul li {
+          margin: 1rem 0;
+          text-align: center;
+        }
+
+        .cta-button {
+          margin: 1rem auto;
+          display: block;
+          width: fit-content;
+        }
+
+        .nav-container {
+          padding: 0 1.5rem;
+        }
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background: #edf2f7;
+      }
+
+      .parallax-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 120%;
+        background: url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920")
+          no-repeat center/cover;
+        z-index: 1;
+        transition: transform 0.1s ease;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        padding: 0 3rem;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transform: translateY(100px);
+        animation: fadeInUp 1.5s ease-out forwards;
+      }
+
+      @keyframes fadeInUp {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+      }
+
+      .hero p {
+        font-size: 1.5rem;
+        max-width: 800px;
+        font-weight: 300;
+      }
+
+      /* Services */
+      .services {
+        max-width: 1400px;
+        margin: 8rem auto;
+        padding: 0 3rem;
+      }
+
+      .services h2 {
+        text-align: center;
+        font-size: 3rem;
+        margin-bottom: 5rem;
+        color: #2c5282;
+        font-weight: 700;
+        position: relative;
+      }
+
+      .services h2::after {
+        content: "";
+        width: 60px;
+        height: 4px;
+        background: #fbd38d;
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 3rem;
+      }
+
+      .service-card {
+        background: white;
+        padding: 3rem;
+        border-radius: 25px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        transition: all 0.4s ease;
+        opacity: 0;
+        transform: translateY(50px);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .service-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .service-card:hover {
+        transform: translateY(-20px) scale(1.03);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      }
+
+      .service-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .service-card img.loaded {
+        opacity: 1;
+      }
+
+      .service-card h3 {
+        font-size: 1.5rem;
+        color: #2b6cb0;
+        margin-bottom: 0.8rem;
+      }
+
+      .service-card p {
+        color: #4a5568;
+      }
+
+      /* Footer */
+      footer {
+        background: linear-gradient(135deg, #2c5282, #1a3657);
+        color: white;
+        padding: 5rem 3rem;
+        position: relative;
+      }
+
+      .footer-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 3rem;
+      }
+
+      .footer-section {
+        transition: transform 0.3s ease;
+      }
+
+      .footer-section:hover {
+        transform: translateY(-10px);
+      }
+
+      .footer-section h3 {
+        font-size: 1.6rem;
+        margin-bottom: 1.8rem;
+        color: #fbd38d;
+        font-weight: 700;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 1rem;
+      }
+
+      .footer-section a {
+        color: #e2e8f0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .footer-section a:hover {
+        color: #fbd38d;
+        padding-left: 10px;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        margin-top: 4rem;
+        padding-top: 2.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+        color: #e2e8f0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loader -->
+    <div class="loader">
+      <div class="loader-circle"></div>
+      <span class="loader-text">Mohanty E-Point</span>
+    </div>
+
+    <header>
+      <div class="nav-container">
+        <div class="logo">Mohanty E-Point</div>
+        <nav>
+          <ul>
+            <li>
+              <a href="#home">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+                  />
+                </svg>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#services">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M12 2a10 10 0 00-10 10 10 10 0 0010 10 10 10 0 0010-10A10 10 0 0012 2zm0 18a8 8 0 01-8-8 8 8 0 018-8 8 8 0 018 8 8 8 0 01-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"
+                  />
+                </svg>
+                Services
+              </a>
+            </li>
+            <li>
+              <a href="#about">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  />
+                </svg>
+                About
+              </a>
+            </li>
+          </ul>
+          <a href="#contact" class="cta-button">Contact Us</a>
+          <button class="hamburger">☰</button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero" id="home">
+      <div class="parallax-bg"></div>
+      <div class="hero-content">
+        <h1>Empowering Communities</h1>
+        <p>
+          Discover seamless access to government services, utilities, and
+          digital solutions at Mohanty E-Point
+        </p>
+      </div>
+    </section>
+
+    <section class="services" id="services">
+      <h2>Our Services</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <img
+            src="https://www.witi.co.in/wp-content/uploads/2024/12/Pan-Card-2.0.webp"
+            alt="PAN Card"
+            loading="lazy"
+          />
+          <h3>PAN Card Services</h3>
+          <p>Apply or update your PAN card with ease and efficiency</p>
+        </div>
+        <div class="service-card">
+          <img
+            src="https://wpblogassets.paytm.com/paytmblog/uploads/2024/07/Blog_Generic_How-to-Apply-for-Reissue-of-Passport-in-India_.jpg"
+            alt="Passport"
+            loading="lazy"
+          />
+          <h3>Passport Services</h3>
+          <p>Fast and reliable passport application and renewal</p>
+        </div>
+        <div class="service-card">
+          <img
+            src="https://www.bankit.in/uploads/category/41961%20(3)-min.jpg"
+            alt="Utility"
+            loading="lazy"
+          />
+          <h3>Utility Payments</h3>
+          <p>Pay electricity, water, and other bills effortlessly</p>
+        </div>
+        <div class="service-card">
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=300"
+            alt="E-Learning"
+            loading="lazy"
+          />
+          <h3>E-Learning</h3>
+          <p>Access online courses and certifications</p>
+        </div>
+      </div>
+    </section>
+
+    <footer id="contact">
+      <div class="footer-container">
+        <div class="footer-section">
+          <h3>About Mohanty E-Point</h3>
+          <p>
+            Connecting communities with digital services since 2025. Your
+            trusted CSC partner.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <ul>
+            <li>Email: JAGANMOHANTY101@GMAIL.COM</li>
+            <li>Phone: +91 9337713776</li>
+            <li>Address: Mohanty E-Point HQ, India</li>
+          </ul>
+          <div
+            style="
+              display: flex;
+              gap: 2rem;
+              margin-top: 2rem;
+              justify-content: flex-start;
+              align-items: center;
+            "
+          >
+            <a
+              href="https://facebook.com"
+              aria-label="Visit our Facebook page"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: linear-gradient(
+                  145deg,
+                  rgba(255, 255, 255, 0.2),
+                  rgba(255, 255, 255, 0.05)
+                );
+                color: #e2e8f0;
+                text-decoration: none;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+              "
+              onmouseover="this.style.background='#fbd38d'; this.style.color='#1a3657'; this.style.transform='scale(1.2) translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.2)'; this.children[0].style.transform='scale(1.1)'; this.style.setProperty('--before-width', '150%'); this.style.setProperty('--before-height', '150%');"
+              onmouseout="this.style.background='linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05))'; this.style.color='#e2e8f0'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)'; this.children[0].style.transform='scale(1)'; this.style.setProperty('--before-width', '0'); this.style.setProperty('--before-height', '0');"
+            >
+              <svg
+                style="
+                  width: 24px;
+                  height: 24px;
+                  z-index: 1;
+                  transition: transform 0.3s ease;
+                "
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
+                />
+              </svg>
+              <span
+                style="
+                  content: &quot;&quot;;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: var(--before-width, 0);
+                  height: var(--before-height, 0);
+                  background: rgba(255, 255, 255, 0.3);
+                  border-radius: 50%;
+                  transform: translate(-50%, -50%);
+                  transition:
+                    width 0.4s ease,
+                    height 0.4s ease;
+                  z-index: 0;
+                "
+              ></span>
+            </a>
+            <a
+              href="https://twitter.com"
+              aria-label="Visit our Twitter page"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: linear-gradient(
+                  145deg,
+                  rgba(255, 255, 255, 0.2),
+                  rgba(255, 255, 255, 0.05)
+                );
+                color: #e2e8f0;
+                text-decoration: none;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+              "
+              onmouseover="this.style.background='#fbd38d'; this.style.color='#1a3657'; this.style.transform='scale(1.2) translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.2)'; this.children[0].style.transform='scale(1.1)'; this.style.setProperty('--before-width', '150%'); this.style.setProperty('--before-height', '150%');"
+              onmouseout="this.style.background='linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05))'; this.style.color='#e2e8f0'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)'; this.children[0].style.transform='scale(1)'; this.style.setProperty('--before-width', '0'); this.style.setProperty('--before-height', '0');"
+            >
+              <svg
+                style="
+                  width: 24px;
+                  height: 24px;
+                  z-index: 1;
+                  transition: transform 0.3s ease;
+                "
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"
+                />
+              </svg>
+              <span
+                style="
+                  content: &quot;&quot;;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: var(--before-width, 0);
+                  height: var(--before-height, 0);
+                  background: rgba(255, 255, 255, 0.3);
+                  border-radius: 50%;
+                  transform: translate(-50%, -50%);
+                  transition:
+                    width 0.4s ease,
+                    height 0.4s ease;
+                  z-index: 0;
+                "
+              ></span>
+            </a>
+            <a
+              href="https://instagram.com"
+              aria-label="Visit our Instagram page"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: linear-gradient(
+                  145deg,
+                  rgba(255, 255, 255, 0.2),
+                  rgba(255, 255, 255, 0.05)
+                );
+                color: #e2e8f0;
+                text-decoration: none;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+              "
+              onmouseover="this.style.background='#fbd38d'; this.style.color='#1a3657'; this.style.transform='scale(1.2) translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.2)'; this.children[0].style.transform='scale(1.1)'; this.style.setProperty('--before-width', '150%'); this.style.setProperty('--before-height', '150%');"
+              onmouseout="this.style.background='linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05))'; this.style.color='#e2e8f0'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)'; this.children[0].style.transform='scale(1)'; this.style.setProperty('--before-width', '0'); this.style.setProperty('--before-height', '0');"
+            >
+              <svg
+                style="
+                  width: 24px;
+                  height: 24px;
+                  z-index: 1;
+                  transition: transform 0.3s ease;
+                "
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.326 3.608 1.301.975.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85 0 3.204-.012 3.584-.07 4.85-.062 1.366-.326 2.633-1.301 3.608-1.301.975-1.24 2.242-1.301 3.608-.058 1.266-.07 1.646-.07 4.85 0 3.204.012 3.584.07 4.85.062 1.366.326 2.633 1.301 3.608 1.301.975 1.24 2.242 1.301 3.608.058 1.266.07 1.646.07 4.85 0 3.204zm0-2.163c-3.259 0-3.667.014-4.947.072-1.36.062-2.803.332-3.883 1.412C2.092 2.563 1.822 4.006 1.76 5.366 1.702 6.646 1.688 7.054 1.688 10.313c0 3.259.014 3.667.072 4.947.062 1.36.332 2.803 1.412 3.883 1.08 1.08 2.523 1.35 3.883 1.412 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.36-.062 2.803-.332 3.883-1.412 1.08-1.08 1.35-2.523 1.412-3.883.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.062-1.36-.332-2.803-1.412-3.883C21.436 2.563 19.993 2.293 18.633 2.231c-1.28-.058-1.688-.072-4.947-.072zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"
+                />
+              </svg>
+              <span
+                style="
+                  content: &quot;&quot;;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: var(--before-width, 0);
+                  height: var(--before-height, 0);
+                  background: rgba(255, 255, 255, 0.3);
+                  border-radius: 50%;
+                  transform: translate(-50%, -50%);
+                  transition:
+                    width 0.4s ease,
+                    height 0.4s ease;
+                  z-index: 0;
+                "
+              ></span>
+            </a>
+            <a
+              href="https://linkedin.com"
+              aria-label="Visit our LinkedIn page"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: linear-gradient(
+                  145deg,
+                  rgba(255, 255, 255, 0.2),
+                  rgba(255, 255, 255, 0.05)
+                );
+                color: #e2e8f0;
+                text-decoration: none;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+              "
+              onmouseover="this.style.background='#fbd38d'; this.style.color='#1a3657'; this.style.transform='scale(1.2) translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0, 0, 0, 0.2)'; this.children[0].style.transform='scale(1.1)'; this.style.setProperty('--before-width', '150%'); this.style.setProperty('--before-height', '150%');"
+              onmouseout="this.style.background='linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05))'; this.style.color='#e2e8f0'; this.style.transform='scale(1)'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)'; this.children[0].style.transform='scale(1)'; this.style.setProperty('--before-width', '0'); this.style.setProperty('--before-height', '0');"
+            >
+              <svg
+                style="
+                  width: 24px;
+                  height: 24px;
+                  z-index: 1;
+                  transition: transform 0.3s ease;
+                "
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill="currentColor"
+                  d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 2a2 2 0 11-4 0 2 2 0 014 0z"
+                />
+              </svg>
+              <span
+                style="
+                  content: &quot;&quot;;
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: var(--before-width, 0);
+                  height: var(--before-height, 0);
+                  background: rgba(255, 255, 255, 0.3);
+                  border-radius: 50%;
+                  transform: translate(-50%, -50%);
+                  transition:
+                    width 0.4s ease,
+                    height 0.4s ease;
+                  z-index: 0;
+                "
+              ></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Mohanty E-Point. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Loader
+      window.addEventListener("load", () => {
+        const loader = document.querySelector(".loader");
+        setTimeout(() => {
+          loader.classList.add("hidden");
+        }, 1000);
+      });
+
+      // Smooth Scrolling
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          target.scrollIntoView({ behavior: "smooth" });
+        });
+      });
+
+      // Parallax Effect
+      window.addEventListener("scroll", () => {
+        const parallax = document.querySelector(".parallax-bg");
+        const scrollPosition = window.scrollY;
+        parallax.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+      });
+
+      // Service Card Animation and Lazy Loading
+      const cards = document.querySelectorAll(".service-card");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+              const img = entry.target.querySelector("img");
+              if (img && !img.classList.contains("loaded")) {
+                img.classList.add("loaded");
+              }
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+
+      cards.forEach((card) => observer.observe(card));
+
+      // Header Shrink on Scroll
+      window.addEventListener("scroll", () => {
+        const header = document.querySelector("header");
+        if (window.scrollY > 50) {
+          header.style.padding = "1rem 0";
+        } else {
+          header.style.padding = "1.5rem 0";
+        }
+      });
+
+      // Mobile Menu Toggle
+      const hamburger = document.querySelector(".hamburger");
+      const navMenu = document.querySelector("nav ul");
+
+      hamburger.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+        hamburger.textContent = navMenu.classList.contains("active")
+          ? "✕"
+          : "☰";
+      });
+
+      // Close menu on link click (mobile)
+      document.querySelectorAll("nav ul li a").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth <= 768) {
+            navMenu.classList.remove("active");
+            hamburger.textContent = "☰";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
