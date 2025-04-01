@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -574,7 +574,7 @@
               </svg>
               <span
                 style="
-                  content: &quot;&quot;;
+                  content: '';
                   position: absolute;
                   top: 50%;
                   left: 50%;
@@ -583,9 +583,7 @@
                   background: rgba(255, 255, 255, 0.3);
                   border-radius: 50%;
                   transform: translate(-50%, -50%);
-                  transition:
-                    width 0.4s ease,
-                    height 0.4s ease;
+                  transition: width 0.4s ease, height 0.4s ease;
                   z-index: 0;
                 "
               ></span>
@@ -633,7 +631,7 @@
               </svg>
               <span
                 style="
-                  content: &quot;&quot;;
+                  content: '';
                   position: absolute;
                   top: 50%;
                   left: 50%;
@@ -642,9 +640,7 @@
                   background: rgba(255, 255, 255, 0.3);
                   border-radius: 50%;
                   transform: translate(-50%, -50%);
-                  transition:
-                    width 0.4s ease,
-                    height 0.4s ease;
+                  transition: width 0.4s ease, height 0.4s ease;
                   z-index: 0;
                 "
               ></span>
@@ -692,7 +688,7 @@
               </svg>
               <span
                 style="
-                  content: &quot;&quot;;
+                  content: '';
                   position: absolute;
                   top: 50%;
                   left: 50%;
@@ -701,9 +697,7 @@
                   background: rgba(255, 255, 255, 0.3);
                   border-radius: 50%;
                   transform: translate(-50%, -50%);
-                  transition:
-                    width 0.4s ease,
-                    height 0.4s ease;
+                  transition: width 0.4s ease, height 0.4s ease;
                   z-index: 0;
                 "
               ></span>
@@ -751,7 +745,7 @@
               </svg>
               <span
                 style="
-                  content: &quot;&quot;;
+                  content: '';
                   position: absolute;
                   top: 50%;
                   left: 50%;
@@ -760,9 +754,7 @@
                   background: rgba(255, 255, 255, 0.3);
                   border-radius: 50%;
                   transform: translate(-50%, -50%);
-                  transition:
-                    width 0.4s ease,
-                    height 0.4s ease;
+                  transition: width 0.4s ease, height 0.4s ease;
                   z-index: 0;
                 "
               ></span>
@@ -776,12 +768,58 @@
     </footer>
 
     <script>
+      // Load Data from localStorage
+      let siteData = JSON.parse(localStorage.getItem("siteData")) || {
+        hero: {
+          title: "Empowering Communities",
+          desc: "Discover seamless access to government services, utilities, and digital solutions at Mohanty E-Point",
+          image:
+            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920",
+        },
+        services: [
+          {
+            id: 1,
+            title: "PAN Card Services",
+            desc: "Apply or update your PAN card with ease and efficiency",
+            image:
+              "https://www.witi.co.in/wp-content/uploads/2024/12/Pan-Card-2.0.webp",
+          },
+          {
+            id: 2,
+            title: "Passport Services",
+            desc: "Fast and reliable passport application and renewal",
+            image:
+              "https://wpblogassets.paytm.com/paytmblog/uploads/2024/07/Blog_Generic_How-to-Apply-for-Reissue-of-Passport-in-India_.jpg",
+          },
+          {
+            id: 3,
+            title: "Utility Payments",
+            desc: "Pay electricity, water, and other bills effortlessly",
+            image:
+              "https://www.bankit.in/uploads/category/41961%20(3)-min.jpg",
+          },
+          {
+            id: 4,
+            title: "E-Learning",
+            desc: "Access online courses and certifications",
+            image:
+              "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=300",
+          },
+        ],
+        contact: {
+          email: "JAGANMOHANTY101@GMAIL.COM",
+          phone: "+91 9337713776",
+          address: "Mohanty E-Point HQ, India",
+        },
+      };
+
       // Loader
       window.addEventListener("load", () => {
         const loader = document.querySelector(".loader");
         setTimeout(() => {
           loader.classList.add("hidden");
         }, 1000);
+        loadContent(); // Load content after page is fully loaded
       });
 
       // Smooth Scrolling
@@ -801,7 +839,6 @@
       });
 
       // Service Card Animation and Lazy Loading
-      const cards = document.querySelectorAll(".service-card");
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
@@ -814,10 +851,8 @@
             }
           });
         },
-        { threshold: 0.2 },
+        { threshold: 0.2 }
       );
-
-      cards.forEach((card) => observer.observe(card));
 
       // Header Shrink on Scroll
       window.addEventListener("scroll", () => {
@@ -849,6 +884,48 @@
           }
         });
       });
+
+      // Dynamic Content Loading
+      function loadContent() {
+        // Reload siteData from localStorage to ensure latest data
+        siteData = JSON.parse(localStorage.getItem("siteData")) || siteData;
+        console.log("Loaded siteData:", siteData); // Debug log
+
+        // Hero Section
+        document.querySelector(".hero h1").textContent = siteData.hero.title;
+        document.querySelector(".hero p").textContent = siteData.hero.desc;
+        document.querySelector(
+          ".parallax-bg"
+        ).style.background = `url("${siteData.hero.image}") no-repeat center/cover`;
+
+        // Services Section
+        const servicesGrid = document.querySelector(".services-grid");
+        servicesGrid.innerHTML = siteData.services
+          .map(
+            (service) => `
+            <div class="service-card">
+                <img src="${service.image}" alt="${service.title}" loading="lazy">
+                <h3>${service.title}</h3>
+                <p>${service.desc}</p>
+            </div>
+        `
+          )
+          .join("");
+
+        // Contact Section
+        const contactList = document.querySelector(
+          "footer .footer-section:nth-child(3) ul"
+        );
+        contactList.innerHTML = `
+            <li>Email: ${siteData.contact.email}</li>
+            <li>Phone: ${siteData.contact.phone}</li>
+            <li>Address: ${siteData.contact.address}</li>
+        `;
+
+        // Re-observe service cards after updating DOM
+        const newCards = document.querySelectorAll(".service-card");
+        newCards.forEach((card) => observer.observe(card));
+      }
     </script>
   </body>
 </html>

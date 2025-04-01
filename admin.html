@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Mohanty E-Point</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background: #f7fafc;
+        color: #1a202c;
+        padding: 2rem;
+      }
+
+      .admin-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2b6cb0;
+        margin-bottom: 2rem;
+      }
+
+      .tab-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid #edf2f7;
+      }
+
+      .tab-btn {
+        padding: 0.8rem 1.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-weight: 600;
+        color: #4a5568;
+      }
+
+      .tab-btn.active {
+        color: #2b6cb0;
+        border-bottom: 3px solid #2b6cb0;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #2b6cb0;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #edf2f7;
+        border-radius: 5px;
+      }
+
+      .service-list {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .service-item {
+        background: #f7fafc;
+        padding: 1rem;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .service-actions button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        color: #4a5568;
+      }
+
+      button[type="submit"],
+      .add-service-btn {
+        background: #2b6cb0;
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      button[type="submit"]:hover,
+      .add-service-btn:hover {
+        background: #2c5282;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="admin-container">
+      <h1>Admin Panel</h1>
+
+      <div class="tab-buttons">
+        <button class="tab-btn active" data-tab="hero">Hero Section</button>
+        <button class="tab-btn" data-tab="services">Services</button>
+        <button class="tab-btn" data-tab="contact">Contact</button>
+      </div>
+
+      <!-- Hero Tab -->
+      <div class="tab-content active" id="hero-tab">
+        <form id="hero-form">
+          <div class="form-group">
+            <label for="hero-title">Hero Title</label>
+            <input type="text" id="hero-title" required />
+          </div>
+          <div class="form-group">
+            <label for="hero-desc">Hero Description</label>
+            <textarea id="hero-desc" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="hero-image">Hero Background Image URL</label>
+            <input type="url" id="hero-image" required />
+          </div>
+          <button type="submit">Save Hero</button>
+        </form>
+      </div>
+
+      <!-- Services Tab -->
+      <div class="tab-content" id="services-tab">
+        <button class="add-service-btn">Add New Service</button>
+        <div class="service-list" id="service-list"></div>
+        <form id="service-form" style="display: none;">
+          <div class="form-group">
+            <input type="hidden" id="service-id" />
+            <label for="service-title">Service Title</label>
+            <input type="text" id="service-title" required />
+          </div>
+          <div class="form-group">
+            <label for="service-desc">Service Description</label>
+            <textarea id="service-desc" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="service-image">Service Image URL</label>
+            <input type="url" id="service-image" required />
+          </div>
+          <button type="submit">Save Service</button>
+        </form>
+      </div>
+
+      <!-- Contact Tab -->
+      <div class="tab-content" id="contact-tab">
+        <form id="contact-form">
+          <div class="form-group">
+            <label for="contact-email">Email</label>
+            <input type="email" id="contact-email" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-phone">Phone</label>
+            <input type="tel" id="contact-phone" required />
+          </div>
+          <div class="form-group">
+            <label for="contact-address">Address</label>
+            <textarea id="contact-address" required></textarea>
+          </div>
+          <button type="submit">Save Contact</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Initial Data
+      let siteData = JSON.parse(localStorage.getItem("siteData")) || {
+        hero: {
+          title: "Empowering Communities",
+          desc: "Discover seamless access to government services, utilities, and digital solutions at Mohanty E-Point",
+          image:
+            "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920",
+        },
+        services: [],
+        contact: {
+          email: "JAGANMOHANTY101@GMAIL.COM",
+          phone: "+91 9337713776",
+          address: "Mohanty E-Point HQ, India",
+        },
+      };
+
+      // Tab Switching
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab-btn")
+            .forEach((b) => b.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-content")
+            .forEach((c) => c.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(`${btn.dataset.tab}-tab`).classList.add("active");
+        });
+      });
+
+      // Render Services
+      function renderServices() {
+        const serviceList = document.getElementById("service-list");
+        serviceList.innerHTML = siteData.services
+          .map(
+            (service) => `
+                <div class="service-item" data-id="${service.id}">
+                    <div>
+                        <h3>${service.title}</h3>
+                        <p>${service.desc}</p>
+                    </div>
+                    <div class="service-actions">
+                        <button class="edit-service">✏️</button>
+                        <button class="delete-service">🗑️</button>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Hero Form
+      const heroForm = document.getElementById("hero-form");
+      document.getElementById("hero-title").value = siteData.hero.title;
+      document.getElementById("hero-desc").value = siteData.hero.desc;
+      document.getElementById("hero-image").value = siteData.hero.image;
+
+      heroForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        siteData.hero = {
+          title: document.getElementById("hero-title").value,
+          desc: document.getElementById("hero-desc").value,
+          image: document.getElementById("hero-image").value,
+        };
+        localStorage.setItem("siteData", JSON.stringify(siteData));
+        console.log("Updated siteData:", JSON.parse(localStorage.getItem("siteData")));
+        alert("Hero section updated!");
+      });
+
+      // Service Management
+      const serviceForm = document.getElementById("service-form");
+      document.querySelector(".add-service-btn").addEventListener("click", () => {
+        serviceForm.style.display = "block";
+        serviceForm.reset();
+        document.getElementById("service-id").value = "";
+      });
+
+      serviceForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = document.getElementById("service-id").value;
+        const newService = {
+          id: id ? parseInt(id) : Date.now(),
+          title: document.getElementById("service-title").value,
+          desc: document.getElementById("service-desc").value,
+          image: document.getElementById("service-image").value,
+        };
+
+        if (id) {
+          siteData.services = siteData.services.map((s) =>
+            s.id === parseInt(id) ? newService : s
+          );
+        } else {
+          siteData.services.push(newService);
+        }
+
+        localStorage.setItem("siteData", JSON.stringify(siteData));
+        console.log("Updated siteData:", JSON.parse(localStorage.getItem("siteData")));
+        renderServices();
+        serviceForm.style.display = "none";
+      });
+
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("edit-service")) {
+          const id = parseInt(e.target.closest(".service-item").dataset.id);
+          const service = siteData.services.find((s) => s.id === id);
+          document.getElementById("service-id").value = service.id;
+          document.getElementById("service-title").value = service.title;
+          document.getElementById("service-desc").value = service.desc;
+          document.getElementById("service-image").value = service.image;
+          serviceForm.style.display = "block";
+        }
+
+        if (e.target.classList.contains("delete-service")) {
+          const id = parseInt(e.target.closest(".service-item").dataset.id);
+          siteData.services = siteData.services.filter((s) => s.id !== id);
+          localStorage.setItem("siteData", JSON.stringify(siteData));
+          console.log("Updated siteData:", JSON.parse(localStorage.getItem("siteData")));
+          renderServices();
+        }
+      });
+
+      // Contact Form
+      const contactForm = document.getElementById("contact-form");
+      document.getElementById("contact-email").value = siteData.contact.email;
+      document.getElementById("contact-phone").value = siteData.contact.phone;
+      document.getElementById("contact-address").value = siteData.contact.address;
+
+      contactForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        siteData.contact = {
+          email: document.getElementById("contact-email").value,
+          phone: document.getElementById("contact-phone").value,
+          address: document.getElementById("contact-address").value,
+        };
+        localStorage.setItem("siteData", JSON.stringify(siteData));
+        console.log("Updated siteData:", JSON.parse(localStorage.getItem("siteData")));
+        alert("Contact details updated!");
+      });
+
+      // Initial Render
+      renderServices();
+    </script>
+  </body>
+</html>
